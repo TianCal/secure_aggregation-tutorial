@@ -12,7 +12,7 @@ One simplest secure aggregation protocol is to **add antiparticles before sendin
 
 Let's imagine the university wants to estimate the average hours of sleep its students have everyday, and it presents a survey to students, asking them to fill in the number.  
 
-Let's try to simulate with **Rust**, we first take 100 random values from range 5 to 12, which means 100 students take the survey, and their answers are uniformly distributed in the range $[5, 12]$.
+Let's try to simulate with **Rust**, we first take 100 random values from range 5 to 12, which means 100 students take the survey, and their answers are uniformly distributed in the range [5, 12].
 
 ```rust
 let range = Uniform::from(5..12);
@@ -20,7 +20,7 @@ let client_vals: Vec<i64> = rand::thread_rng().sample_iter(&range).take(100).col
 
 ```
 
-Then, to conduct the secure aggregation protocol above, we do some masking on these values before sending them to the server. For each pair of students, we generate a random masking value in range $[-10, 10]$,  we add the value to one student's sleeping time, and then subtract the value from the other's sleeping time.  One thing to notice is that each student's sleeping time is masked by **99** masking values since it has a pair with every other student.
+Then, to conduct the secure aggregation protocol above, we do some masking on these values before sending them to the server. For each pair of students, we generate a random masking value in range [-10, 10],  we add the value to one student's sleeping time, and then subtract the value from the other's sleeping time.  One thing to notice is that each student's sleeping time is masked by **99** masking values since it has a pair with every other student.
 
 ```rust
 let mut masked_vals: Vec<i64> = client_vals.clone();
