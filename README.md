@@ -2,31 +2,6 @@
 
 
 
-```rust
-
-use rand::{distributions::Uniform, Rng};
-
-fn main() {
-    let range = Uniform::from(5..12);
-    let client_vals: Vec<i64> = rand::thread_rng().sample_iter(&range).take(100).collect();
-    let mut masked_vals: Vec<i64> = client_vals.clone();
-    for i in 0..100 {
-        for j in i+1..100 {
-            let masking_val: i64 = rand::thread_rng().gen_range(-10..10);
-            masked_vals[i] += masking_val;
-            masked_vals[j] -= masking_val;
-        }
-    }
-    let naive_aggregate: i64 = client_vals.iter().sum();
-    println!("Server Aggregate result: {:.2}", aggregate_server(masked_vals));
-    println!("Naive Aggregate result: {:.2}", naive_aggregate);
-}
-
-fn aggregate_server(masked_vals: Vec<i64>) -> i64{
-    masked_vals.iter().sum()
-}
-```
-
 People fill out online surveys from time to time, and a majority of the surveys claim that they will guarantee **anonymities** to their participants. People also are confident that privacy will not be invaded, since they don't write their names or addresses in the survey. However, their responses are sent to the organizers **intact**, without any processing, along with their IP addresses. 
 
 Is there a way for the survey organizer to receive the overall results of the survey, but not know about each individual questionnaire? For sure we also don't want any participant to hold information about other participants. It turns out this is possible with **Secure Aggregation protocols**, 
@@ -83,7 +58,31 @@ We can see that the aggregate server, without knowing the actual sleeping hours 
 
 
 
+### Full code
+```rust
 
+use rand::{distributions::Uniform, Rng};
+
+fn main() {
+    let range = Uniform::from(5..12);
+    let client_vals: Vec<i64> = rand::thread_rng().sample_iter(&range).take(100).collect();
+    let mut masked_vals: Vec<i64> = client_vals.clone();
+    for i in 0..100 {
+        for j in i+1..100 {
+            let masking_val: i64 = rand::thread_rng().gen_range(-10..10);
+            masked_vals[i] += masking_val;
+            masked_vals[j] -= masking_val;
+        }
+    }
+    let naive_aggregate: i64 = client_vals.iter().sum();
+    println!("Server Aggregate result: {:.2}", aggregate_server(masked_vals));
+    println!("Naive Aggregate result: {:.2}", naive_aggregate);
+}
+
+fn aggregate_server(masked_vals: Vec<i64>) -> i64{
+    masked_vals.iter().sum()
+}
+```
 
 
 
