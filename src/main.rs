@@ -9,22 +9,11 @@ struct Client {
 }
 
 impl Client {
-    pub fn initialize_multiple (num_participants: i64) -> Vec<Client> {
-        let mut clients: Vec<Client> = Vec::new();
-        for i in 0..num_participants {
-            let client_name: String = String::from(format!("Client #{}", i+1));
-            let client_value: Wrapping<u32> = Wrapping(rand::thread_rng().gen_range(5..12));
-            let mut curr_client = Client::new(client_name, client_value);
-            clients.push(curr_client);
-        }
-        clients
-    }
-
     pub fn new (name: String, sending_value: Wrapping<u32>) -> Client {
         Client {value: sending_value, name:name, masked_value: sending_value}
     }
 
-    fn add_to_value (&mut self, masking_val: Wrapping<u32>) {
+    fn mask_by_adding (&mut self, masking_val: Wrapping<u32>) {
         self.masked_value = self.masked_value + masking_val;
     }
 
@@ -32,7 +21,7 @@ impl Client {
         for curr_collaborator in other_clients {
             let masking_val: Wrapping<u32> = Wrapping(rand::thread_rng().gen());
             self.masked_value = self.masked_value - masking_val;
-            curr_collaborator.add_to_value(masking_val);
+            curr_collaborator.mask_by_adding(masking_val);
         } 
     }
 
@@ -68,7 +57,15 @@ impl Server {
 
 fn main() {
     let num_participants = 1000;
-    let mut clients: Vec<Client> = Client::initialize_multiple(num_participants);
+    let mut clients: Vec<Client> = Vec::new();
+    // Generate all the clients with a for loop.
+    for i in 0..num_participants {
+        let client_name: String = String::from(format!("Client #{}", i+1));
+        let client_value: Wrapping<u32> = Wrapping(rand::thread_rng().gen_range(5..12));
+        let mut curr_client = Client::new(client_name, client_value);
+        clients.push(curr_client);
+    }
+    // Generate a server and tells it all the clients we just generated.
     let mut server: Server = Server{aggregate_value:Wrapping(0), clients:clients};
     
     let naive_aggregate: Wrapping<u32> = server.clients.iter().map(|c| c.value).sum();
@@ -77,4 +74,5 @@ fn main() {
     server.initialize();
     println!("Server Aggregate result: {:.2}", server.aggregate());
 }
+
 
