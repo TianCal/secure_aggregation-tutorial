@@ -28,7 +28,7 @@ mod filters {
     pub fn client_ops(
         client: Client_Async,
     )-> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-        add_to_val(client.clone()).
+        mask_by_adding(client.clone()).
             or(share_val(client.clone())).
             or(interact_with_others(client.clone()))
     }
@@ -43,16 +43,16 @@ mod filters {
             .and_then(handlers::share_val)
     }
 
-    /// POST /addtovalue
-    pub fn add_to_val (
+    /// POST /maskbyadd
+    pub fn mask_by_adding (
         client: Client_Async
     ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
         let with_client = warp::any().map(move || client.clone());
         
-        warp::path!("addtovalue" / u32)
+        warp::path!("maskbyadding" / u32)
             .and(warp::post())
             .and(with_client)
-            .and_then(handlers::add_to_val)
+            .and_then(handlers::mask_by_adding)
     }
 
     
@@ -77,7 +77,7 @@ mod handlers {
     use warp::http::{StatusCode, Response};
     use rand::{distributions::Uniform, Rng};
 
-    pub async fn add_to_val(masking_val: u32, client_async: Client_Async) -> Result<impl warp::Reply, Infallible>{
+    pub async fn mask_by_adding(masking_val: u32, client_async: Client_Async) -> Result<impl warp::Reply, Infallible>{
         let mut client = client_async.lock().await;
         client.masked_value = client.masked_value + Wrapping(masking_val);
         println!("Added {} to masked val: {}", masking_val,client.masked_value);
@@ -96,7 +96,7 @@ mod handlers {
         for curr_collaborator in collaborator_port_list.port_list {
             let masking_val: Wrapping<u32> = Wrapping(rand::thread_rng().gen());
             client.masked_value = client.masked_value - masking_val;
-            let res = http_client.post(format!("http://localhost:{}/addtovalue/{}", curr_collaborator, masking_val))
+            let res = http_client.post(format!("http://localhost:{}/maskbyadding/{}", curr_collaborator, masking_val))
                 .send()
                 .await;
             println!("---------\n \
