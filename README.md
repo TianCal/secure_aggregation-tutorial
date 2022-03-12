@@ -1,8 +1,8 @@
-## 1.3 Server implementation
+# 1.3 Server implementation
 
 Now we have a clear abstraction of clients' and server's interfaces. However, in real-world applications, clients and aggregation servers will not reside in one single machine, and thus we need to have a network-based implementation for secure aggregation protocol.
 
-[warp](#https://docs.rs/warp/latest/warp/) is a easy-to-use web server framework for rust. In this chapter we will use warp to implement the servers for both clients and aggregation server. For each server, we will have three modules, which are **filters**, **handlers** and **models**. **Filters** are used to describe endpoints in our web service, and it will pass the requests into **handlers**. Both **filters** and **handlers** might use structs and constructors defined in **models**. To learn more about warp, here are some official [example web servers](#https://github.com/seanmonstar/warp/tree/master/examples).
+[warp](https://docs.rs/warp/latest/warp/) is a easy-to-use web server framework for rust. In this chapter we will use warp to implement the servers for both clients and aggregation server. For each server, we will have three modules, which are **filters**, **handlers** and **models**. **Filters** are used to describe endpoints in our web service, and it will pass the requests into **handlers**. Both **filters** and **handlers** might use structs and constructors defined in **models**. To learn more about warp, here are some official [example web servers](https://github.com/seanmonstar/warp/tree/master/examples).
 
 ### Client
 
@@ -310,4 +310,4 @@ Different from last two chapters, we will have to run multiple programs to test 
 
 ### Full Code
 
-View at [Github](#https://github.com/TianCal/secure_aggregation-tutorial/tree/http)
+View at [Github](https://github.com/TianCal/secure_aggregation-tutorial/tree/http)
